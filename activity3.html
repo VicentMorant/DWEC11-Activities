@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Lista de tareas</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<h1>Lista de tareas</h1>
+<form id="formulario">
+    <input type="text" id="tarea" placeholder="Nueva tarea">
+    <button id="mas">+</button>
+</form>
+<div id="main">
+    <ul id="lista">
+
+    </ul>
+</div>
+<script>
+
+const main = document.getElementById("main");
+const formulario = document.getElementById("formulario");
+const botonMas = document.getElementById("mas");
+const inputTexto = document.getElementById("tarea");
+const lista = document.getElementById("lista");
+var arrayTascas = localStorage.getItem("tascas");
+
+window.addEventListener("load", (ev) => {  
+    ev.preventDefault()  ;
+    if(localStorage.getItem("tascas")){        
+        arrayTascas = localStorage.getItem("tascas").split(";");          
+        añadir(arrayTascas);
+    }
+
+});
+
+
+botonMas.addEventListener("click", function(ev){  
+    ev.preventDefault();    
+        if(inputTexto.value.length != 0){
+            if(!localStorage.getItem("tascas")){
+                localStorage.setItem("tascas", inputTexto.value);
+                arrayTascas =localStorage.getItem("tascas").split(";");                                
+                añadir(arrayTascas);
+            }else{                                
+                arrayTascas = localStorage.getItem("tascas").split(";");                                       
+            }
+            
+           if(!arrayTascas.includes(inputTexto.value)){            
+                    localStorage.setItem("tascas", localStorage.getItem("tascas") + ";" + inputTexto.value);                    
+                    arrayTascas = localStorage.getItem("tascas").split(";");
+                    añadir(arrayTascas);
+                }
+        
+            inputTexto.value="";
+        }      
+
+});
+
+function añadirDatos(text){
+
+           
+                    var nuevoLi = document.createElement("li");
+                    //una division
+                    var nuevoDiv = document.createElement("div");
+                    //un enlace
+                    var nuevoA = document.createElement("a");        
+                    //un boton
+                    var botonRemove = document.createElement("button");
+                    botonRemove.addEventListener("click", function(ev){                        
+                        arrayTascas = localStorage.getItem("tascas");                        
+                        if(arrayTascas.includes(`${text};`)){
+                            //arrayTascas.pop();
+                            localStorage.setItem("tascas", arrayTascas.replace(`${text};`, ""));
+                        }else{
+                            localStorage.setItem("tascas", arrayTascas.replace(`${text}`, ""));
+                        }                        
+                        
+                        nuevoLi.remove();
+                    });
+                    botonRemove.innerText = "remove";                                                            
+                    nuevoA.innerText = text;                    
+                    nuevoDiv.appendChild(nuevoA);     
+                    nuevoDiv.appendChild(botonRemove);                    
+                    nuevoLi.appendChild(nuevoDiv)                    
+                    lista.appendChild(nuevoLi);
+}
+
+function ordenar(array){
+    
+    let ordenacion = (a, b) => {
+        if (a > b) return 1;
+        if (a < b) return -1;
+        return 0;
+    }
+
+    return array.sort(ordenacion);        
+}
+
+
+function añadir(array){
+            
+    ordenar(array);
+    if(array[0] == null || array[0] == ""){
+        array.shift();
+        localStorage.setItem("tascas", array.join(";"));
+    }
+
+    while(lista.firstChild) {
+        lista.removeChild(lista.firstChild)
+    }
+
+    for(let i = 0; i<array.length; i++){
+        añadirDatos(array[i]);
+    }    
+
+}
+
+
+
+</script>
+</body>
+</html>

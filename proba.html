@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Lista de tareas</h1>
+<form id="formulario">
+    <input type="text" id="tarea" placeholder="Nueva tarea">
+    <button id="mas">+</button>
+</form>
+<div>
+    <ul id="lista">
+
+    </ul>
+</div>
+
+</body>
+
+<script>
+
+const formulario = document.getElementById("formulario");
+const botonMas = document.getElementById("mas");
+const inputTexto = document.getElementById("tarea");
+const lista = document.getElementById("lista");
+
+
+var arrayTascas = localStorage.getItem("tascas");
+window.addEventListener("load" , (ev) => {
+    if(arrayTascas){
+        arrayTascas = localStorage.getItem("tascas").split(";");
+        refrescar(añadirDatos);
+    }
+})
+
+
+//cuando pulsamos el boton de añadir
+botonMas.addEventListener("click", function(ev){  
+    //quitamos el evento de recargar la pagina
+    ev.preventDefault();
+    //si el contenido del input no esta vacio...
+    if(inputTexto.value.length != 0){
+
+        if(!arrayTascas.includes(inputTexto.value)){        
+
+            arrayTascas.push(inputTexto.value);
+        //creamos un li
+        var nuevoLi = document.createElement("li");
+        //una division
+        var nuevoDiv = document.createElement("div");
+        //un enlace
+        var nuevoA = document.createElement("a");        
+        //un boton
+        var botonRemove = document.createElement("button");
+        botonRemove.innerText = "remove";
+        //que tenga una id 
+        botonRemove.getAttribute("id", "eliminar");        
+
+        //el contenido del a sera el contenido del input
+        nuevoA.innerText = inputTexto.value;
+        
+        //meteremos a la division el "a" y el boton
+        nuevoDiv.appendChild(nuevoA);        
+        nuevoDiv.appendChild(botonRemove);
+        //y al li le meteremos la division
+        nuevoLi.appendChild(nuevoDiv)
+        //y a la lista le meteremos el li
+        lista.appendChild(nuevoLi);
+
+        //recojemos todos los botones que haya
+        let todosBotones = document.querySelectorAll("div a+button");
+        //y todos los li
+        let todosLi = document.querySelectorAll("ul#lista li");
+        botonRemove.addEventListener("click", function(ev){                        
+            arrayTascas = localStorage.getItem("tascas");                          
+            if(arrayTascas.includes(`${inputTexto.value};`)){
+                localStorage.setItem("tascas", arrayTascas.replace(`${inputTexto.value};`, ""));
+            }else{
+                localStorage.setItem("tascas", arrayTascas.replace(`${inputTexto.value}`, ""));
+            }                                                
+            nuevoLi.remove();
+        });
+        //recorreremos todos los botones que seran los mismos que los li
+        for(let i = 0; i<todosBotones.length; i++){
+            //el primer hijo del li es div y el primer hijo del div es "a", si se clica ese a...
+            todosLi[i].childNodes[0].childNodes[0].addEventListener("click", function(ev){
+                //cremos el primer hijo en ese momento
+                let hijoPrimero = document.querySelector("ul#lista li:first-child");
+                //y insertamos el li[i] antes del primer hijo
+                lista.insertBefore(todosLi[i], hijoPrimero);
+            });
+
+        }
+        //cuando se inserta algo el valor del input se resetea
+        inputTexto.value="";
+        }  
+    }
+
+});
+
+function añadirDatos(text){    
+    var nuevoLi = document.createElement("li");
+        //una division
+        var nuevoDiv = document.createElement("div");
+        //un enlace
+        var nuevoA = document.createElement("a");        
+        //un boton
+        var botonRemove = document.createElement("button");
+        botonRemove.innerText = "remove";
+        //que tenga una id 
+        botonRemove.getAttribute("id", "eliminar");        
+
+        //el contenido del a sera el contenido del input
+        nuevoA.innerText = text;
+        
+        //meteremos a la division el "a" y el boton
+        nuevoDiv.appendChild(nuevoA);        
+        nuevoDiv.appendChild(botonRemove);
+        //y al li le meteremos la division
+        nuevoLi.appendChild(nuevoDiv)
+        //y a la lista le meteremos el li
+        lista.appendChild(nuevoLi);
+
+        //recojemos todos los botones que haya
+        let todosBotones = document.querySelectorAll("div a+button");
+        //y todos los li
+        let todosLi = document.querySelectorAll("ul#lista li");
+        botonRemove.addEventListener("click", function(ev){                        
+            arrayTascas = localStorage.getItem("tascas");                          
+            if(arrayTascas.includes(`${text};`)){
+                localStorage.setItem("tascas", arrayTascas.replace(`${text};`, ""));
+            }else{
+                localStorage.setItem("tascas", arrayTascas.replace(`${text}`, ""));
+            }                                                
+            nuevoLi.remove();
+        });
+        //recorreremos todos los botones que seran los mismos que los li
+        for(let i = 0; i<todosBotones.length; i++){
+            //el primer hijo del li es div y el primer hijo del div es "a", si se clica ese a...
+            todosLi[i].childNodes[0].childNodes[0].addEventListener("click", function(ev){
+                //cremos el primer hijo en ese momento
+                let hijoPrimero = document.querySelector("ul#lista li:first-child");
+                //y insertamos el li[i] antes del primer hijo
+                lista.insertBefore(todosLi[i], hijoPrimero);
+            });
+
+        }
+
+
+}
+
+
+function refrescar(array){
+
+    for(let i = 0; i<array.length; i++){
+        añadirDatos(array[i]);
+    }
+
+}
+
+</script>
+
+</html>
