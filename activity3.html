@@ -21,48 +21,60 @@
 </div>
 <script>
 
-const main = document.getElementById("main");
+//creamos las constantes
 const formulario = document.getElementById("formulario");
 const botonMas = document.getElementById("mas");
 const inputTexto = document.getElementById("tarea");
 const lista = document.getElementById("lista");
+
+//cojeremos los datos del localStorage
 var arrayTascas = localStorage.getItem("tascas");
 
+//al recargar la ventana si el localStorage tiene algo
 window.addEventListener("load", (ev) => {  
     ev.preventDefault()  ;
     if(localStorage.getItem("tascas")){        
+        //le damos valor al array con los valores del localStorage y creamos un li por cada elemento del localStorage
         arrayTascas = localStorage.getItem("tascas").split(";");          
         añadir(arrayTascas);
     }
 
 });
 
-
+//al clicar el boton añadir
 botonMas.addEventListener("click", function(ev){  
-    ev.preventDefault();    
+    ev.preventDefault();   
+    //comprobamos que tenga algo de valor el input 
         if(inputTexto.value.length != 0){
+            //si no existe el item "tascas"
             if(!localStorage.getItem("tascas")){
+                //creamos tascas y le damos como valor el valor del input
                 localStorage.setItem("tascas", inputTexto.value);
+                //lo pasamos a array y añadimos a la interfaz un li ya que el array solo tendra un valor/posicion
                 arrayTascas =localStorage.getItem("tascas").split(";");                                
                 añadir(arrayTascas);
-            }else{                                
+            }else{   
+                //si ya tenia valor tascas, le damos valor al array con los valores del localStorage                            
                 arrayTascas = localStorage.getItem("tascas").split(";");                                       
             }
             
+            //si la array no contiene el input            
            if(!arrayTascas.includes(inputTexto.value)){            
+                    //guardamos el input despues de los valores ya guardados.
                     localStorage.setItem("tascas", localStorage.getItem("tascas") + ";" + inputTexto.value);                    
+                    //lo pasamos al array y creamos los li
                     arrayTascas = localStorage.getItem("tascas").split(";");
                     añadir(arrayTascas);
                 }
-        
+            //al terminar dejaremos el input vacio
             inputTexto.value="";
         }      
 
 });
 
-function añadirDatos(text){
 
-           
+function añadirDatos(text){
+                    
                     var nuevoLi = document.createElement("li");
                     //una division
                     var nuevoDiv = document.createElement("div");
@@ -70,17 +82,21 @@ function añadirDatos(text){
                     var nuevoA = document.createElement("a");        
                     //un boton
                     var botonRemove = document.createElement("button");
+                    //al pulsar el boton borrar...
                     botonRemove.addEventListener("click", function(ev){                        
+                        //si el array contiene la variable texto mas punto y como ";"
                         arrayTascas = localStorage.getItem("tascas");                        
                         if(arrayTascas.includes(`${text};`)){
-                            //arrayTascas.pop();
+                            //en el localStorage cambiamos "texto;" por vacio
                             localStorage.setItem("tascas", arrayTascas.replace(`${text};`, ""));
                         }else{
+                            //si el array solo contiene la variable texto, quiere decir que es la ultima posicion y no tendra ";"
+                            //borraremos del localStorage la variable "text"
                             localStorage.setItem("tascas", arrayTascas.replace(`${text}`, ""));
                         }                        
-                        
+                        //eliminamos el li
                         nuevoLi.remove();
-                    });
+                    });                    
                     botonRemove.innerText = "remove";                                                            
                     nuevoA.innerText = text;                    
                     nuevoDiv.appendChild(nuevoA);     
@@ -90,29 +106,33 @@ function añadirDatos(text){
 }
 
 function ordenar(array){
-    
+    //funcion para ordenar el array que le pasemos
     let ordenacion = (a, b) => {
         if (a > b) return 1;
         if (a < b) return -1;
         return 0;
     }
-
+    //devolveremos el array
     return array.sort(ordenacion);        
 }
 
 
+
 function añadir(array){
-            
+//al añadir primero ordenaremos y los vacios quedaran primero            
     ordenar(array);
+    //si hay algun vacio o null esetara en la primera posicion si lo hay
     if(array[0] == null || array[0] == ""){
+        //borramos la primera posicion y el localStorage tendra como valor el array en String
         array.shift();
         localStorage.setItem("tascas", array.join(";"));
     }
-
+    //ahora elimino cada li de la lista
     while(lista.firstChild) {
         lista.removeChild(lista.firstChild)
     }
 
+    //mientra haya posicion que recorrer del array añadiremos un nuevo "li"
     for(let i = 0; i<array.length; i++){
         añadirDatos(array[i]);
     }    
