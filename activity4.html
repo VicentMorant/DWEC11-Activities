@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <style>
+        div.contenido{
+            text-align: center;
+            position: relative;
+            display: inline-block;
+        }
+        h1{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background-color: black;
+            color: white;
+            font-size: 32px;
+            padding: 10px;
+        }
+        video{
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+        <div id="contenido">
+            <video src="./video.mp4" id="video"></video>
+        </div>
+</body>
+<script>
+    let main = document.getElementById("contenido");
+    let video = document.getElementById("video");
+
+    video.addEventListener("click", (ev) => {
+        ev.preventDefault();
+
+        if(video.paused){
+            video.play();
+        }else{
+            video.pause();
+        }
+
+    });
+
+    video.addEventListener("contextmenu", (ev) => {
+        ev.preventDefault();
+
+        let hijosTotales = document.querySelectorAll("div#contenido")[0].childElementCount;
+        
+        
+        
+
+        if(hijosTotales == 1){
+            let texto = document.createElement("h1");                
+            texto.textContent = "0 minutos : "+ Math.trunc(video.currentTime)+ " segundos";
+            main.appendChild(texto);
+        }else{
+            main.removeChild(main.lastChild);
+        }
+
+    })
+
+</script>
+</html>
